@@ -1,0 +1,29 @@
+sample(10000,35)
+help("sample")
+######## VAMOS A CREAR UNA PEQUEÑA BASE DE DATOS...
+# 4 VARIABLES: NOMBRE, EDAD, SEXO, TIPO DE EDUCACION
+nombre<-c("sergio","alan","betzabeth","judith","rodrigo","eric","diego","angel")
+edad<-c(36,20,23,20,21,21,22,21)
+sexo<-c("hombre","hombre","mujer","mujer","hombre","hombre","hombre","hombre")
+teduca<-c("publica","publica","publica","publica","privada","publica","publica","publica")
+base1<-matrix(c(edad,nombre,sexo,teduca))
+#######creamos una base en forma de matriz
+base1.1<-data.frame(nombre,edad,sexo,teduca)
+####conjuntar los vectores y los pone en forma de tabla
+#####data.frame
+   ###VAMOS A UTILIZAR A FUNCION TABLE 
+   ###TABLE SE UTILIZA PARA CONOCER LA FRECUENCIA DE LAS DIFERENTES VARIABLES 
+  ###"TABLE LA MAS RECOMENDABLE"
+table(base1.1$edad)
+table(base1.1$sexo)
+ ####attach = ADJUNTAR RUTA; ENTONCES -TABLE(EDAD) ///SIRVE PARA LO MISMO, DE DIFERENTE MANERA!
+ #### DETACH = MOSTRAR EN CONSOLA
+ ####SUMMARY = RESUMEN DE ESTADICTICAS DESCRIPTIVAS
+summary(base1.1$edad)
+
+
+###IMPORTAR BASE DE DATOS FOREIGN
+install.packages("foreign")
+require(foreign)
+sociodem<-read.dbf ("/Users/pepeferegrino/Documents/BD/SDEMT215.dbf")
+table(sociodem$SEX)
