@@ -1,0 +1,86 @@
+#LIMPIAR EL ENTORNO DE TRABAJO
+##CONTROL+L = LIMPIAR CONSOLA 
+require(foreign)
+rm(list=ls())
+#setwd("direccion del archivo")
+sociodem<-read.dbf ("/Users/pepeferegrino/Documents/BD/SDEMT215.dbf")
+##sociodem<-data.frame(sociodem)
+###sociodem<-data.frame(read.dbf("sociodem"))
+View(sociodem)
+#METODO1
+install.packages("questionr")
+require(questionr)
+wtd.table(sociodem$POS_OCU)
+##MOSTRAR DATOS PERDIDOS
+wtd.table(sociodem$POS_OCU,na.show=TRUE)  
+
+##PARA QUE NOS DE LA POBLACION EXPANDIDA 
+wtd.table(sociodem$POS_OCU,weights=sociodem$FAC,na.show=TRUE)
+#TABULADOR CON DATOS PONDERADOS
+wtd.table(sociodem$SEX,sociodem$POS_OCU,weights=sociodem$FAC)
+#EJERCICIO
+#1)OBTENER LA FREC DE LA VARIABLE CLASE1(MUESTRAL)
+#2)OBTENER E TABULADO DE ENTIDAD Y SEXO(MUESTRAL Y PONDERADO)
+wtd.table(sociodem$CLASE1)
+wtd.table(sociodem$ENT,sociodem$SEX,weights = sociodem$FAC)
+
+
+
+##################etiquetar en otra variable
+###
+sociodem$SEXO<-factor(sociodem$POS_OCU,levels=c(1,2),labels = c("Hombre","Mujer")
+                      #ETUQIETAR EN LA MISMA VARIABLE
+                      sociodem$POS_OCU<-factor(sociodem$POS_OCU,levels = c(1,2,3,4,5),labels = c("Subordinados y remunerados","Empleadores","Cuenta propia","Sin pago","NE"))
+                      wtd.table(sociodem$POS_OCU)
+                      
+                      ############################### 18-AGOSTO-2016
+                      
+              #recodificacion de variables numericas (rangos) METODO CORCHETES
+                      sociodem$EDAD11[as.numeric(sociodem$EDA)>=0 & as.numeric(sociodem$EDA)<=10]<-1
+                      sociodem$EDAD11[as.numeric(sociodem$EDA)>=21 & as.numeric(sociodem$EDA)<=30]<-3
+                      sociodem$EDAD11[as.numeric(sociodem$EDA)>=11 & as.numeric(sociodem$EDA)<=20]<-2
+                      sociodem$EDAD11[as.numeric(sociodem$EDA)>=31 & as.numeric(sociodem$EDA)<=40]<-4
+                      sociodem$EDAD11[as.numeric(sociodem$EDA)>=41]<-5
+                ##ls=lista de variable
+                    ls(sociodem)
+            table(sociodem$EDAD11)
+        #con esta tabla vemos la edad de las personas por rangos
+            #que tipo es : class
+            class(sociodem$ENT) 
+    ##cambio de tipo 
+          sociodem$ENT<-(as.character(as.numeric(sociodem$ENT)))
+            class(sociodem$ENT)
+      ###OTRO METODO PARA RECODIFICAR ifelse
+            sociodem$EDAD111<-ifelse(as.numeric(sociodem$EDA)>=0 & as.numeric(sociodem$EDA)<=10,1,
+                                     ifelse(as.numeric(sociodem$EDA)>=11 & as.numeric(sociodem$EDA)<=20,2,
+                                            ifelse(as.numeric(sociodem$EDA)>=21 & as.numeric(sociodem$EDA)<=30,3,
+                                                   ifelse(as.numeric(sociodem$EDA)>=31 & as.numeric(sociodem$EDA)<=40,4,5))))
+            table(sociodem$EDAD111)
+            
+            #recodificacion de variables de tipo carcter
+            #cuando es caracter siempre lleva comillas
+            class(sociodem$R_DEF)
+            sociodem$VALIDO[as.character(sociodem$R_DEF)!="00"]<-"ENTREVISTA INCOMPLETA"
+            sociodem$VALIDO[as.character(sociodem$R_DEF)=="00"]<-"ENTREVISTA COMPLETA"
+            wtd.table(sociodem$VALIDO)
+            table(sociodem$VALIDO)
+#############################################################################    
+#5. Subconjunto de datos
+##5.1SELECCIONANDO VARIABLES DE INTERES
+            #METODO 1
+var<-c("R_DEF","LOC","MUN","C_RES")
+#[RENGLON,COLUMNA] 
+newdata1<-sociodem[,var]
+
+
+####5.2 SELECCIONAR CASOS u observaciones
+#funcion.....subset()  (bd, que deseas mantener)
+mujer<-subset(sociodem,sociodem$SEX==2)
+help("subset")
+table(mujer$SEX)
+class(mujer$CD_A)
+mujer1<-subset(mujer, mujer$CD_A == "02" | mujer$CD_A == "16")
+mujer$CD_A<-as.character(mujer$CD_A)
+table(sociodem$CD_A)
+table(mujer1$CD_A)
+
