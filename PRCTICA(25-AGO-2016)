@@ -1,0 +1,27 @@
+sdemt<-read.dbf ("/Users/pepeferegrino/Documents/BD/SDEMT215.dbf")
+require(foreign)
+View(sdemt)
+rm(list=ls())
+sdemt$ENT1<-as.numeric(as.character(sdemt$ENT))
+##01 = AGUASCALIENTES ### 30= VERACRUZ
+help("data.frame")
+wtd.table(sdemt$POS_OCU,na.show=TRUE)
+require(questionr)
+wtd.table(sdemt$ENT1)
+##MOSTRAR DATOS PERDIDOS
+wtd.table(sdemt$ENT1,na.show=TRUE)
+sdemt$ENT1<-factor(sdemt$ENT1,levels = c(1,30),labels = c("Aguascalientes","Veracruz"))
+wtd.table(sdemt$ENT1)
+##tabuar con datos pond
+#wtd.table(sdemt$SEX,sdemt$POS_OCU,weights=sdemt$FAC)
+sdemt$tabla1<-as.numeric(as.character(sdemt$SEX))
+sdemt$tabla1<-factor(sdemt$tabla1,levels = c(1,2),labels = c("hombre","mujer"))
+wtd.table(sdemt$ENT1,sdemt$tabla1)
+wtd.table(sdemt$ENT1,sdemt$POS_OCU)
+
+
+##TABLA1 = SEXO
+##ENT1 = ENTIDAD AGUASC, VERACRUZ
+
+
+##############################################################################
