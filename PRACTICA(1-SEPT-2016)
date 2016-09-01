@@ -1,0 +1,41 @@
+rm(list = ls())
+#estatura= 1.2, 1.23, 1.19, 1.32, 1.28, 1.22, 1.17, 1.29, 1.33, 1.15
+#nivel economico = 110, 130, 108, 167, 156, 115, 104, 138, 170, 107
+#queremos comprobar la hipotesis que entre mayor ingreso de la familia 
+#hay una mayor estatura en niñas 
+esta<- c(1.2,1.23, 1.19, 1.32, 1.28, 1.22, 1.17, 1.29, 1.33, 1.15)
+eco<- c(110, 130, 108, 167, 156, 115, 104, 138, 170, 107)
+plot(eco, esta, pch=11, xlab="ingreso economico", 
+     ylab = "estatura", main="grafica de dispersión",col="red")
+#EL SEGUNDO PASO ES VER LA CORRELACION 
+#PARA CALCULAR EL COEF DE CORRELACION SE UTILIZA 
+help(cor)
+cor(esta,eco,method = "pearson")
+#la forma gral de cor es
+#argumentos:
+#1)var dependientes
+#2)var independientes
+#3)metodo de correlación
+###############
+
+#una vez que tenemos la idea de que hay una buena relación 
+#variables hay que confirmarla
+#para realizar una prueba de la correlacion existe 
+#una fn que se define cor.test()
+#la prueba de hipotesis para esta funcion es H0=r=0
+#es decir no hay relacion, ha=! , o si hay relacion 
+#misma logica de cor()
+cor.test(esta,eco,method = "pearson")
+##Si el p-value es menos a 0.05 rechazamos Ho
+##POR LO QUE SI EXISTE RELACIÓN 
+######
+#3) YA QUE CONFIRMAMOS LA CORRELACIÓN APLICAMOS EL MODELO 
+#PARA APLICAR EL MODELO SE UYILIZA LA FN lm()
+####lm = aplicamos relación(MODELO LINEAL)
+mod1<- lm(esta~eco)
+summary(mod1)
+#abline da la grafica de dispersion de las variables en estudio (recta ajustada segun los datos)
+abline(mod1)
+esta= .9323 + .0023 eco
+#estos valores sales de la intercept del mod1 
+#TAREA: PLANTEAR UN PROBLEMA CON VARIABLES 
