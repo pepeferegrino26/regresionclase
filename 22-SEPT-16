@@ -1,0 +1,14 @@
+require (foreign)
+sociodem<-read.dbf("/Users/pepeferegrino/Documents/BD/base.dbf")
+View(sociodem)
+##ENTIDAD SELECCIONADA: QUERETARO
+require(questionr)
+wtd.table(sociodem$ENT)
+entidad<-subset(sociodem,sociodem$ENT==22)
+
+wtd.table(entidad$SEX)
+wtd.table(entidad$POS_OCU)
+entidad$ocupa<- factor(entidad$POS_OCU, levels = c(1,2,3,4,5), labels = c("T. SUBORDINADOS Y REM", "EMPLEADORES", "TRABAJADORES POR C/PROPIA", "TRABAJADORES SIN PAGO","NO ESPECIFIC"))
+entidad$sexo<- factor(entidad$SEX, levels = c(1,2), labels = c("HOMBRES","MUJERES"))
+wtd.table(entidad$ocupa)
+wtd.table(entidad$sexo)
