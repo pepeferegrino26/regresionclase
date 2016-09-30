@@ -1,0 +1,126 @@
+ rm(list = ls())
+ #MODELO DE REGRESIÓN MULTIPLE///ya cin dos variables se sabe que es reg. multiple
+ capa<-c(4330,5500,5500,4700,5200,5500,4700,5500,5800,5000)#inde(x2)
+ calidad<-c(2,3,4,3,4,4,4,5,5,5)#independiente(x1)
+precio<-c(190,219,249,249,250,340,289,395,439,525)#dependiente(y)
+ mochil<-data.frame(precio,capa,calidad)
+#mochil1<- mochil[c(-1,-7,-10),]
+#View(mochil1)
+#####mochil2<-[,-2]  =ELIMINA COLUMNAS.. ///ORDEN DE COMO INGRESAMOS LOS VECTORES EN MOCHIL
+
+
+
+ #primero aplicamos una correlacion
+ cor(mochil,use = "everything",method = "pearson")
+ #OBSERVAMOS QUE LAS VARIABLES TIENEN CORRELACION DIVERSAS 
+ #APLICAMOS MODELOS
+ modmo<-lm(precio~calidad+capa)
+ summary(modmo)
+ #se revisa la R2 AJUSTADA POR SER UN mRM TENEMOS UNA 
+ #r2 AJUSTADA DE .70 LO QUE IMPLICA QUE LA RECTA DE REGRESIÓN 
+ #EXPLICA EN 70 POR CIENTO LA VARIABILIDAD DEL MODELO
+ #REVISANDO EL VALOR F Y P VALUE TENEMOS QUE SI CUMPLE CON 
+ #LOS CRITERIOS DE UN BUEN AJUSTE (F>1 Y PVALUE<.05)
+ #CON ESTOS DATOS PODEMOS MENCIONAS QUE ESTAMOS 
+ #ANTE UN BUEN MODELO, POR LO QUE SE PASA AL DIAGNOSTICO 
+ #EL DIAGNOSTICO SE REALIZA PARA PODER GENERALIZAR LOS 
+ #RESULTADOS DEL MODELO A PARTIR DE LA REVISION DE LOS SUPUESTOS 
+ #LO PRIMERO QUE SE HACE EN UN MRM ES OBSERVAR GRAFICAMENTE LOS SUPUESTOS 
+ #EN PRIMER LUGAR SE CONSTRASTAN LOS VALORES 
+ #RESIDUALES CONTRA LOS VALORES AJUSTADOS  
+ #SE REALIZAN CON LA FUNCION PLOT Y EL ARGUMENTO WHICH = 1 
+ #RECUERDEN QUE EL PCH CAMBIA LA FIGURA DE LAS OBSERVACIONES 
+ plot(modmo,which =1 ,pch = 3)
+ #AQUI ESPERAMOS A QUE LOS RESIDUOS SE DISTRIBUYAN SIN PATRON 
+ #UNA TENDENCIA EN LA VARIABILIDAD DE LOS RESIDUOS SUGIERE
+ #QUE LA VARIANZA ESTA RELACIONADA CON LA MEDIA, VIOLANDO EL SUPUESTO DE VARIANZA CONSTANTE
+ 
+ ####SUPUESTO DE NORMALIDAD 
+ plot(modmo,which = 2, pch = 3)
+ #EN ESTE CASO ESPERAMOS QUE LOS RESIDUOS 
+ #TIPIFICADOS ESTEN AL REDEDOR O SERCA DE LA LINEA
+ #SE OBSERVA QUE SI HAY DISTRIBUCION NORMAL 
+ 
+ ##TERCER SUPUESTO
+ #LOS REDIDUOS ESTAN ESTANDARIZADOS 
+ #POR SUS DESVIACIONES ESTANDARD ESTIMADAS
+ plot(modmo, which = 3, pch = 3)
+ #AQUI PODEMOS VER SI LOS RESIDUOS SE DISTRIBUYEN CONSTANTES 
+ #EN LOS VALORES AJUSTADOS
+ #UNA GRAFICA SIN PATRON OBSERVABLE 
+ #CUARTO SUPUESTO
+  plot(modmo,which = 5,pch = 3)
+ #EXPONE LA IMPORTANCIA DE CASA OBSERVACION EN EL MODELO 
+  #EN ESTA DISTANCIA EL GRAFICO NOS MUESTRA LAS OBSERVACIONES 
+  #QUE PODRAN IMPACTAR EN EL MODELO 
+  #POR LO QUE SE SUGIERE ELIMINARLAS 
+  
+ 
+  
+  #/////////////////////////////////////////////////////////////////////////////30 de septiembre de 2016
+  
+  #DESPUES DE ANALISAR GRAFICAMENTE SE APLICA PRUEBAS PARA CONFIRMAR
+  #QUE EL MRM SI CUMPLE CON LOS SUPUESTOS PARA APLICAR ESTAS PRUEBAS 
+  #PARA APLICAR ESTAS PRUEBAS SE GENERAN LOS VALORES AJUSTADOS, LOS RESIDUALES Y LOS ESTANDARIZADOS 
+  
+ mochil$ajustados<- fitted(modmo)
+ #fit= obtener los valores ajustados del modelo 
+ mochil$res<- residuals(modmo)
+ mochil$rstud<- rstudent(modmo)
+  ###PRIMERA PRUEBA DE NORMALIDAD
+  ##PAQUETE LMTEST
+  install.packages("lmtest")
+  require(lmtest)
+  ks.test(mochil$rstud, "pnorm")
+  #SE PLANTEA UNA PRUEBA DE HIPOTESIS Y SE ESPERA UN P VALUE MAYOR A 0.05
+  #SI TENEMOS UN P VALUE MAYOR A 0.05 NO SE RECHAZA LA HIPOTESIS NULA Y SE ACEPTA QUE HAY NORMALIDAD 
+  #EN ESTE CASO EL MODELO PASA LA PRUEBA DE NORMALIDAD
+  
+  #LA SEGUNDA PRUEBA QUE SE HACE ES LA HOMOGENEIDAD DE VARIANZAS Y ESTA PRUEBA 
+  #SE REALIZA CON LA FUNCION BPTEST
+        #aqui nos comprovara la homog. de la varianza
+        bptest(modmo,studentize = FALSE, data = mochil)
+        ##df= grados de libertad
+        #TENEMOS UN P VALUE MAYOR A 0.05 POR LO TANTO PASA LA PRUEBA DE HOMOGENEIDAD
+#LA TERCERA PRUEBA ES DE AUTOCORRELACION 
+#ESTA PRUEBA SE LLAMA DE DURBIN WATSON
+#LA FUNION PARA ESTA PRUEBA ES DW()
+          dwtest(modmo, alternative ="two.sided", data = mochil)
+          #en esta prueba hay dos modalidades para comprovar 
+          #1.- El p-value mayor a 0.05
+          #2.- El valor de durbin watson (rango aceptable 1.5 a 2.5) y quiere decir que hay
+          #independencia
+
+#CON ESTAS TRES PRUEBAS QUE HICIMOS PODRIAMOS CONFIRMAR QUE NO HAY CORRELACION ENTRE LOS RESIDUOS 
+#TAMBIEN SE CONFIRMA QUE TENEMOS UN MODELO CON BUEN AJUSTE; SIN EMBARGO HAY QUE REVISAR LOS CASOS ATIPICOS..
+          #LIBRERIA CAR
+              install.packages("car")      
+              require(car)
+              outlierTest(modmo)
+              #outliertest nos muestra los casos atipicos en mi modelo 
+#UNA VEX QUE OBSERVAMOS LOS CASOS ATIPICOS PROCEDEMOS A CONOCER LA INFLUENCIA DE ESTOS CASOS
+#EN EL MODELO PARA OBSERVAR LA INFLEUNCIAS SE UTILIZA LA FN INFLUENCE.MEASURES()
+              influ<- influence.measures(modmo)
+              summary(influ)
+              ##columna 1: casos de mayor mas influyentes que en este modelo son 1,2 y 10
+              ##las columnas que hacen referencia a dbf nos indican la influencia en los coeficientes del modelo!
+              ##las columnas que nos presentan mayor interés son las (cook.d y hat) que nos exponen 
+              ##con mayor claridad la influencia, el cook es la distancia de cook y entre mas cercano a 1 hay mayor influencia 
+              ##de la observacion; en este caso la observ. 10 es la que tiene mayor distancia de cook, en esta distancia 
+              ##valores mayores a 1 hay certeza de que esa observacion esta influyendo en los resultados del modelo. 
+              ##En la columna del hat se asocia con las medidad de leverange que varian entre 0 y 1. Entre mas cercano a 1 
+              ##mayor influencia. 
+              ##Ademas de estas pruebas se hace el analisis grafico de los casos influyentes con la funcion influenceplot()
+              influencePlot(modmo)
+              ##El analisis grafico se realiza con base en el tamaño de las circunferencias que arroja 
+              ##es decir; a mayor circunferencia el cas tiene mayor influencia 
+              
+                ##grafico para la distancia de cook. Se requiere de la libreria faraway
+                install.packages("faraway")  
+                require(faraway)
+                cooks.distance(modmo)
+               
+                dc<- cooks.distance(modmo)
+                etiqueta<- row.names(mochil)
+                halfnorm(dc,3,etiqueta)
+                
