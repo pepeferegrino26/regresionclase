@@ -1,0 +1,52 @@
+###PROFE LO HICIMOS DE UNA CIUDAD ALEATORIA POR QUE NO NOS ACORDAMOS DEL QUE NOS TOCO. 
+##GARCIA FEREGRINO JOSE
+##BARRERA VILLEGAS ERIC
+##CORTES GONZALEZ ANDREA
+################MODELO#############
+rm(list = ls())
+require(foreign)
+sociodem<- read.dbf("/Users/pepeferegrino/Documents/BD/SDEMT215.dbf")
+View(sociodem)
+var<- c("ENT","EDA","SEX","INGOCUP","HRSOCUP","ANIOS_ESC","REMUNE2C")
+base<-sociodem[,var]
+ciudad<- subset(base, (base$ENT=="14") & (as.numeric(base$EDA)>=15 & as.numeric(base$EDA)<=65) & (as.numeric(base$INGOCUP)>=1 & as.numeric(base$INGOCUP)<=30000) & (as.numeric(base$REMUNE2C)==1))
+View(ciudad)
+require(questionr)
+wtd.table(sociodem$REMUNE2C, na.show = TRUE)
+wtd.table(ciudad$REMUNE2C, na.show = TRUE)
+####<NA> = 0
+wtd.table(ciudad$ENT, na.show = TRUE)
+####<NA> = 0
+wtd.table(ciudad$EDA, na.show = TRUE)
+####<NA> = 0
+wtd.table(sociodem$SEX, na.show = TRUE)
+wtd.table(ciudad$SEX, na.show = TRUE)
+#### <na> = 0
+wtd.table(sociodem$INGOCUP, na.show = TRUE)
+wtd.table(ciudad$INGOCUP, na.show = TRUE)
+#### <na> = 0
+wtd.table(sociodem$HRSOCUP, na.show = TRUE)
+wtd.table(ciudad$HRSOCUP, na.show = TRUE)
+#### <na> = 0
+wtd.table(sociodem$ANIOS_ESC, na.show = TRUE)
+wtd.table(ciudad$ANIOS_ESC, na.show = TRUE)
+#### <na> = 0
+ciudad$INGOCUP<-as.numeric(as.character(ciudad$INGOCUP))
+ciudad$EDA<-as.numeric(as.character(ciudad$EDA))
+ciudad$SEX<-as.numeric(as.character(ciudad$SEX))
+ciudad$HRSOCUP<-as.numeric(as.character(ciudad$HRSOCUP))
+ciudad$ANIOS_ESC<-as.numeric(as.character(ciudad$ANIOS_ESC))
+class(ciudad$INGOCUP)
+relacion<- data.frame(ciudad$INGOCUP, ciudad$EDA, ciudad$SEX, ciudad$HRSOCUP, ciudad$ANIOS_ESC)
+cor(relacion)
+
+
+
+modmo<- lm(INGOCUP~EDA+SEX+HRSOCUP+ANIOS_ESC, data=ciudad)
+summary(modmo)
+##Residual standard error: 2957 on 3252 degrees of freedom
+##Multiple R-squared:  0.2823,	Adjusted R-squared:  0.2814 
+##F-statistic: 319.7 on 4 and 3252 DF,  p-value: < 2.2e-16
+
+
+step(modmo, direction="backward")
