@@ -1,0 +1,18 @@
+#DEFINIR DIRECTORIO DONDE ESTARA MI BASE
+rm(list = ls())
+#####setwd("RUTA")
+require(foreign)
+mti2013<- data.frame(read.dbf("/Users/pepeferegrino/Documents/mti2013_05_17_sdem_precodificado.dbf"))
+####COMPROBAR MODELO
+wtd.table(mti2013$T_LOC, weights = mti2013$FAC_MTI)
+wtd.table(mti2013$T_LOC, mti2013$CLASE2, weights = mti2013$FAC_MTI)
+#####################
+
+#población objetivo son ocupados y zonas rurales
+
+mti2013v1<-subset(mti2013, mti2013$CLASE2 ==1 & mti2013$T_LOC==4)
+require(questionr)
+wtd.table(mti2013v1$SEX, weights = mti2013v1$FAC_MTI)
+wtd.table(mti2013v1$T_PER, weights = mti2013v1$FAC_MTI)
+#FUNCION PARA IMPORTAR DE SPSS
+#VARIABLE<- READ.SPSS("RUTA")
