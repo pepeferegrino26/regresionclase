@@ -1,0 +1,10 @@
+rm(list = ls())
+require(foreign)
+eness<- read.dbf("/Users/pepeferegrino/Documents/BD/bd_eness13_dbf/eness2013_cb_enoe_sdem.dbf")
+hogar<- read.dbf("/Users/pepeferegrino/Documents/BD/bd_eness13_dbf/eness2013_hogares.dbf")
+folio<- paste(hogar$CD_A, hogar$ENT, hogar$CON, hogar$V_SEL, hogar$N_HOG, hogar$H_MUD)
+X<-data.frame(hogar,folio)
+folio<- paste(eness$CD_A, eness$ENT, eness$CON, eness$V_SEL, eness$N_HOG, eness$H_MUD, eness$N_REN)
+X1<-data.frame(eness,folio)
+total<- merge(X,X1,by="folio",all.x = TRUE)
+edad1<-
