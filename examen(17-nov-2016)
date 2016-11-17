@@ -1,0 +1,25 @@
+rm(list = ls())
+install.packages("Hmisc")
+library(Hmisc)
+#setwd('/Users/pepeferegrino/Documents/BD/MTI/solorural.sav')
+mti2015<- spss.get("/Users/pepeferegrino/Documents/BD/MTI/solorural.sav")
+View(mti2015)
+mti<- read.spss("/Users/pepeferegrino/Documents/BD/MTI/solorural.sav", to.data.frame=TRUE)
+wtd.table(mti2015$SEX)
+###EN ESTA PARTE ME CREABA LA VARIABLE PERO NO PODIA VISUALIZARLO 
+#FRECUENCIA DE LOS DIFERENTES GRUPOS DE EDAD
+wtd.table(mti2015$sex,mti2015$EDA)
+
+mti2015$SEX<-as.character(as.numeric(mti2015$SEX))
+x1<-subset(mti2015SEX,mti2015SEX$EDA>=5| mti2015SEX$EDA<=17)
+
+##pruebas
+mti2015$sex <- factor(mti2015$sex, levels=c(1,2), labels=c("HOMBRE", "MUJER"))
+wtd.table(mti2015$sex)
+
+
+#<-read.table(header=TRUE,text="")
+
+
+variable<-c("eda", "pos.ocu", "sex")
+
