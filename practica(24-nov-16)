@@ -1,0 +1,58 @@
+rm(list = ls())
+library(foreign)
+ninrun<- (read.spss("/Users/pepeferegrino/Documents/BD/MTI/solorural.sav"))
+ninrun<- data.frame(ninrun)
+library(questionr)
+wtd.table(ninrun$sex, weights = ninrun$fac_mti)
+wtd.table(ninrun$eda, weights = ninrun$fac_mti)
+#####t_per########
+ninrocu<- subset(ninrun, ninrun$c_ocu == 'ocupado')
+
+####RECODIFICAR 
+table(ninrocu$t_per)
+
+
+
+table(ninrocu$sex)
+table(ninrocu$eda1, ninrocu$eda)
+table(ninrocu$asis)
+table(ninrocu$sex_jefe)
+table(ninrocu$escol_jefe)
+table(ninrocu$t_apo1)
+table(ninrocu$ocu_jefe)
+#####ELIMINAR EL 4 EN NINROCU
+
+install.packages("plyr")
+library(plyr)
+ninrocu$t_per<- revalue(factor(ninrocu$t_per),c("4"=NA))
+table(ninrocu$t_per)
+#####
+install.packages("Hmisc")
+library(Hmisc)
+require(car)
+wtd.table(ninrocu$eda1, weights = ninrocu$fac_mti)
+
+
+
+
+ninrocu$t_per<- factor(ninrocu$t_per, levels = c(1,2,3), labels = c("familiar","no familiar", "cuenta propia"))
+ninrocu$eda1<- factor(ninrocu$eda1, levels = c(1,2,3), labels = c("5 a 9", "10 a 13", "14 a 17"))
+
+####regresion logistica
+library(nnet)
+mod1<-multinom(t_per~1, data = ninrocu, trace=FALSE)
+modfin<-multinom(t_per~sex + eda1+asis+sex_jefe+tam_hog+ocu_jefe+t_apo1, data = ninrocu)
+g<- summary(modfin,cor=F, wald=T)
+print(g)
+
+
+
+
+#####tabla en latex 
+
+install.packages("stargazer")
+library(stargazer)
+help("stargazer")
+s<- stargazer(modfin, type='text', title="coefficients", summary=T)
+#stargazer(modfin,type="text", title="mlogit", digits=2, out=
+####cuando es menor a 1 es menor probable de ocurrencia y cuando es mayor a 1 es mayor probable!
